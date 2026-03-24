@@ -1,9 +1,7 @@
 "use client";
 import { useState } from 'react';
-import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function Home() {
-  const { data: session } = useSession();
   const [keyword, setKeyword] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [results, setResults] = useState<any[]>([]);
@@ -16,7 +14,7 @@ export default function Home() {
     }
 
     setLoading(true);
-    setResults([]); // Clear old results
+    setResults([]);
 
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
@@ -44,16 +42,6 @@ export default function Home() {
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold', background: 'linear-gradient(to right, #60a5fa, #c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           Swoopa Replica
         </h1>
-        <nav>
-          {session ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <span style={{ color: '#cbd5e1' }}>Hi, {session.user?.name}</span>
-              <button className="btn" onClick={() => signOut()}>Sign Out</button>
-            </div>
-          ) : (
-            <button className="btn" onClick={() => signIn()}>Sign In</button>
-          )}
-        </nav>
       </header>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 2fr', gap: '30px' }}>
@@ -88,14 +76,11 @@ export default function Home() {
 
         <section className="glass-panel">
           <h2 style={{ marginBottom: '20px' }}>Recent Flips</h2>
-          
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             {results.length === 0 && !loading && (
               <p style={{ color: '#94a3b8' }}>No results yet. Start a swoop to see listings!</p>
             )}
-            
-            {loading && <p style={{ color: '#3b82f6' }}>Spinning up headless browser to search...</p>}
-
+            {loading && <p style={{ color: '#3b82f6' }}>Searching marketplaces...</p>}
             {results.map((item, idx) => (
               <div key={idx} className="glass-panel" style={{ padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
